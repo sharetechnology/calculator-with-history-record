@@ -15,6 +15,8 @@
 		A991B9E31BA14C2000B1AF2A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A991B9DE1BA14C2000B1AF2A /* AppDelegate.m */; };
 		A991B9E41BA14C2000B1AF2A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A991B9E01BA14C2000B1AF2A /* ViewController.m */; };
 		A991B9E51BA14C2000B1AF2A /* MyNaviViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A991B9E21BA14C2000B1AF2A /* MyNaviViewController.m */; };
+		A991B9E91BA1689E00B1AF2A /* calculator.png in Resources */ = {isa = PBXBuildFile; fileRef = A991B9E71BA1689E00B1AF2A /* calculator.png */; };
+		A991B9EA1BA1689E00B1AF2A /* historyView.png in Resources */ = {isa = PBXBuildFile; fileRef = A991B9E81BA1689E00B1AF2A /* historyView.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +45,8 @@
 		A991B9E01BA14C2000B1AF2A /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		A991B9E11BA14C2000B1AF2A /* MyNaviViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyNaviViewController.h; sourceTree = "<group>"; };
 		A991B9E21BA14C2000B1AF2A /* MyNaviViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyNaviViewController.m; sourceTree = "<group>"; };
+		A991B9E71BA1689E00B1AF2A /* calculator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = calculator.png; sourceTree = "<group>"; };
+		A991B9E81BA1689E00B1AF2A /* historyView.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = historyView.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +88,7 @@
 		A991B9B61BA14B2A00B1AF2A /* Calculator */ = {
 			isa = PBXGroup;
 			children = (
+				A991B9E61BA1688600B1AF2A /* screenshot */,
 				A991B9DD1BA14C2000B1AF2A /* AppDelegate.h */,
 				A991B9DE1BA14C2000B1AF2A /* AppDelegate.m */,
 				A991B9DF1BA14C2000B1AF2A /* ViewController.h */,
@@ -122,6 +127,15 @@
 				A991B9D21BA14B2A00B1AF2A /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		A991B9E61BA1688600B1AF2A /* screenshot */ = {
+			isa = PBXGroup;
+			children = (
+				A991B9E71BA1689E00B1AF2A /* calculator.png */,
+				A991B9E81BA1689E00B1AF2A /* historyView.png */,
+			);
+			name = screenshot;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -204,6 +218,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A991B9E91BA1689E00B1AF2A /* calculator.png in Resources */,
+				A991B9EA1BA1689E00B1AF2A /* historyView.png in Resources */,
 				A991B9C31BA14B2A00B1AF2A /* Main.storyboard in Resources */,
 				A991B9C81BA14B2A00B1AF2A /* LaunchScreen.xib in Resources */,
 				A991B9C51BA14B2A00B1AF2A /* Images.xcassets in Resources */,
@@ -422,6 +438,7 @@
 				A991B9D91BA14B2A00B1AF2A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		A991B9DA1BA14B2A00B1AF2A /* Build configuration list for PBXNativeTarget "CalculatorTests" */ = {
 			isa = XCConfigurationList;
@@ -430,6 +447,7 @@
 				A991B9DC1BA14B2A00B1AF2A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
