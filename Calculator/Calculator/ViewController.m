@@ -25,12 +25,22 @@
     BOOL shouldRefreshLab;//按下下一个按钮时是否应该清除所有显示的内容
     BOOL inputFirstNum;//是否正在输入第一个数，反之则输入第二个数
     int symbolType;//代表用户输入的运算符的种类：0-加法，1-减法，2-乘法，3-除法
+    
+    NSString* dataFilePath;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    self.historyResults=[NSMutableArray new];
+    
+    //load data
+    NSString* documentDirectory=NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+    dataFilePath=[documentDirectory stringByAppendingPathComponent:@"historyData.plist"];
+
+    self.historyResults=[[NSMutableArray new] initWithContentsOfFile:dataFilePath];
+
+    NSLog(@"%@",self.historyResults);
+
     
     //创建导航按钮
     UIImage* historyImage=[UIImage imageNamed:@"history"];
@@ -308,6 +318,8 @@
 
 -(void) doClear {
     [self.historyResults removeAllObjects];
+    [self.historyResults writeToFile:dataFilePath atomically:YES];
+    
     [self.historyViewController.tableView reloadData];
 }
 
@@ -466,9 +478,14 @@
     finalResult=[finalResult stringByAppendingString:secondNumberStr];
     finalResult=[finalResult stringByAppendingString:[NSString stringWithFormat:@"%c",'=']];
     finalResult=[finalResult stringByAppendingString:resultStr];
+
     [self.historyResults insertObject:finalResult atIndex:0];
+    
+    [self.historyResults writeToFile:dataFilePath atomically:YES];
+    //NSLog(@"%@",self.historyResults);
     [self.historyViewController.tableView reloadData];
 }
+
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     // Return the number of sections.
@@ -476,7 +493,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    // Return the number of rows in the section.
+    // Return the number of rows in the section
     return [self.historyResults count];
 }
 
@@ -487,10 +504,9 @@
         cell.backgroundColor=[UIColor colorWithRed:173.0/255.0 green:183.0/255.0 blue:204.0/255.0 alpha:1.0];
         cell.textLabel.textColor=[UIColor colorWithRed:21.0/255.0 green:44.0/255.0 blue:94.0/255.0 alpha:0.8];
     }
+    
     cell.textLabel.text=self.historyResults[indexPath.row];
-    
     // Configure the cell...
-    
     return cell;
 }
 
