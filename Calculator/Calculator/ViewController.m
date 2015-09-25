@@ -24,6 +24,8 @@
     
     BOOL shouldRefreshLab;//按下下一个按钮时是否应该清除所有显示的内容
     BOOL inputFirstNum;//是否正在输入第一个数，反之则输入第二个数
+    BOOL continuousSymbol;
+    
     int symbolType;//代表用户输入的运算符的种类：0-加法，1-减法，2-乘法，3-除法
     
     NSString* dataFilePath;
@@ -141,7 +143,7 @@
             NSFontAttributeName:[UIFont fontWithName:@"Courier-Oblique" size:30],
             NSForegroundColorAttributeName:[UIColor whiteColor]             }];
     [equalButton setAttributedTitle:showEqual forState:UIControlStateNormal];
-    [equalButton addTarget:self action:@selector(inputEqua:) forControlEvents:UIControlEventTouchUpInside];
+    [equalButton addTarget:self action:@selector(inputEqua) forControlEvents:UIControlEventTouchUpInside];
     [rootV addSubview:equalButton];
     //按钮0
     buttonX=buttonX-buttonW-margin;
@@ -181,7 +183,7 @@
     [ACButton setAttributedTitle:showAC forState:UIControlStateNormal];
     [ACButton addTarget:self action:@selector(deleteInput:) forControlEvents:UIControlEventTouchUpInside];
     [rootV addSubview:ACButton];
-    //按钮anser
+    //按钮answer
     buttonX=buttonX+buttonW+margin;
     UIButton* ansButton=[UIButton buttonWithType:UIButtonTypeSystem];
     [ansButton setFrame:CGRectMake(buttonX, buttonY, buttonW, buttonH)];
@@ -191,7 +193,7 @@
         NSFontAttributeName:[UIFont fontWithName:@"Courier-Oblique" size:30],
         NSForegroundColorAttributeName:[UIColor whiteColor]}];
     [ansButton setAttributedTitle:showAns forState:UIControlStateNormal];
-    [ansButton addTarget:self action:@selector(showLastAns:) forControlEvents:UIControlEventTouchUpInside];
+    [ansButton addTarget:self action:@selector(showLastAns) forControlEvents:UIControlEventTouchUpInside];
     [rootV addSubview:ansButton];
 
     
@@ -265,8 +267,10 @@
     firstNumberStr=@"";
     secondNumberStr=@"";
     inputFirstNum=YES;
+    continuousSymbol=NO;
 }
 
+#pragma mark - button AC pressed
 -(void) deleteInput:(UIButton*)sender {
     if (shouldRefreshLab) {
         firstNumberStr=@"";
@@ -288,7 +292,8 @@
     }
 }
 
--(void) showLastAns:(UIButton*)sender {
+#pragma mark - button Ans pressed
+-(void) showLastAns {
     if (shouldRefreshLab) {
         firstNumber=result;
         firstNumberStr=resultStr;
@@ -296,22 +301,21 @@
         [self.firstNumberLab setText:firstNumberStr];
         [self.secondNumberLab setText:nil];
         [self.resultNumberLab setText:nil];
+        [self.symbolLab setText:@""];
         shouldRefreshLab=NO;
         inputFirstNum=NO;
         return;
     }
     else {
-        //firstNumberStr=@"";
         secondNumber=result;
         secondNumberStr=resultStr;
-        //[self.firstNumberLab setText:nil];
         [self.secondNumberLab setText:secondNumberStr];
-        //[self.resultNumberLab setText:nil];
         inputFirstNum=NO;
         return;
     }
 }
 
+#pragma mark - button in history view
 -(void) backToCalculator {
     [self.navigationController popViewControllerAnimated:YES];
 }
@@ -323,6 +327,7 @@
     [self.historyViewController.tableView reloadData];
 }
 
+#pragma mark - button 1~9 pressed
 -(void) inputNumber: (UIButton*)sender {
     if (shouldRefreshLab) {
         firstNumberStr=@"";
@@ -348,85 +353,9 @@
             return;
         }
         [self.secondNumberLab setText:secondNumberStr];
+        continuousSymbol=YES;//开启连续输入模式
     }
 
-}
-
-//判断一个小数的小数点后有多少位
--(short) decimalPosition: (NSString*)inputNumStr {
-    NSRange	Pointrange;
-    Pointrange=[inputNumStr rangeOfString:[NSString stringWithFormat:@"%c",'.']];
-    if (Pointrange.location==NSNotFound) {
-        return 0;
-    }
-    else
-        return (short)(inputNumStr.length-Pointrange.location-1);
-  }
-
--(void) inputSymbol: (UIButton*)sender {
-    if (shouldRefreshLab) {
-        firstNumber=result;
-        firstNumberStr=resultStr;
-        secondNumberStr=@"";
-        [self.firstNumberLab setText:firstNumberStr];
-        [self.secondNumberLab setText:nil];
-        [self.resultNumberLab setText:nil];
-        switch (sender.tag) {
-            case 10:
-                self.symbolLab.text=[NSString stringWithFormat:@"%c",'+'];
-                symbolType=0;
-                break;
-                
-            case 11:
-                self.symbolLab.text=[NSString stringWithFormat:@"%c",'-'];
-                symbolType=1;
-                break;
-                
-            case 12:
-                self.symbolLab.text=[NSString stringWithFormat:@"%c",'*'];
-                symbolType=2;
-                break;
-                
-            case 13:
-                self.symbolLab.text=[NSString stringWithFormat:@"%c",'/'];
-                symbolType=3;
-                break;
-                
-            default:
-                break;
-        }
-
-        shouldRefreshLab=NO;
-        inputFirstNum=NO;
-        return;
-    }
-    inputFirstNum=NO;
-    firstNumber=[firstNumberStr doubleValue];
-    resultAccuracy=[self decimalPosition:firstNumberStr];
-    switch (sender.tag) {
-        case 10:
-            self.symbolLab.text=[NSString stringWithFormat:@"%c",'+'];
-            symbolType=0;
-            break;
-            
-        case 11:
-            self.symbolLab.text=[NSString stringWithFormat:@"%c",'-'];
-            symbolType=1;
-            break;
-
-        case 12:
-            self.symbolLab.text=[NSString stringWithFormat:@"%c",'*'];
-            symbolType=2;
-            break;
-
-        case 13:
-            self.symbolLab.text=[NSString stringWithFormat:@"%c",'/'];
-            symbolType=3;
-            break;
-
-        default:
-            break;
-    }
 }
 
 -(void) inputPoint: (UIButton*)sender {
@@ -440,8 +369,85 @@
     }
 }
 
--(void) inputEqua: (UIButton*) sender {
+//判断一个小数的小数点后有多少位
+-(short) decimalPosition: (NSString*)inputNumStr {
+    NSRange	Pointrange;
+    Pointrange=[inputNumStr rangeOfString:[NSString stringWithFormat:@"%c",'.']];
+    if (Pointrange.location==NSNotFound) {
+        return 0;
+    }
+    else
+        return (short)(inputNumStr.length-Pointrange.location-1);
+}
+
+#pragma mark - button symbol pressed
+-(void)determineSymbol:(NSInteger) input{
+    switch (input) {
+        case 10:
+            self.symbolLab.text=[NSString stringWithFormat:@"%c",'+'];
+            symbolType=0;
+            break;
+            
+        case 11:
+            self.symbolLab.text=[NSString stringWithFormat:@"%c",'-'];
+            symbolType=1;
+            break;
+            
+        case 12:
+            self.symbolLab.text=[NSString stringWithFormat:@"%c",'*'];
+            symbolType=2;
+            break;
+            
+        case 13:
+            self.symbolLab.text=[NSString stringWithFormat:@"%c",'/'];
+            symbolType=3;
+            break;
+            
+        default:
+            break;
+    }
+
+}
+
+-(void) inputSymbol: (UIButton*)sender {
+    if (continuousSymbol) {
+        [self inputEqua];
+        firstNumber=result;
+        firstNumberStr=resultStr;
+        secondNumberStr=@"";
+        [self.firstNumberLab setText:firstNumberStr];
+        [self.secondNumberLab setText:nil];
+        [self.resultNumberLab setText:nil];
+        shouldRefreshLab=NO;
+        inputFirstNum=NO;
+        [self determineSymbol:sender.tag];
+
+        return;
+    }
+    if (shouldRefreshLab) {
+        firstNumber=result;
+        firstNumberStr=resultStr;
+        secondNumberStr=@"";
+        [self.firstNumberLab setText:firstNumberStr];
+        [self.secondNumberLab setText:nil];
+        [self.resultNumberLab setText:nil];
+        [self determineSymbol:sender.tag];
+        shouldRefreshLab=NO;
+        inputFirstNum=NO;
+        return;
+    }
+    inputFirstNum=NO;
+    firstNumber=[firstNumberStr doubleValue];
+    resultAccuracy=[self decimalPosition:firstNumberStr];
+    [self determineSymbol:sender.tag];
+
+}
+
+
+#pragma mark - button '=' pressed
+-(void) inputEqua {
     shouldRefreshLab=YES;
+    continuousSymbol=NO;
     secondNumber=[secondNumberStr floatValue];
     short secondDecimalPosition=[self decimalPosition:secondNumberStr];
     NSString* finalResult=firstNumberStr;
@@ -486,7 +492,7 @@
     [self.historyViewController.tableView reloadData];
 }
 
-
+#pragma mark - tableview datasource related
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     // Return the number of sections.
     return 1;
@@ -510,13 +516,16 @@
     return cell;
 }
 
+-(void) pushHistoryView {
+    [self.navigationController pushViewController:self.historyViewController animated:YES];
+}
+
+#pragma mark - others
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
--(void) pushHistoryView {
-    [self.navigationController pushViewController:self.historyViewController animated:YES];
-}
+
 
 @end
